@@ -1,0 +1,18 @@
+# qmake / Qt Creator
+.qmake.stash
+Makefile
+Makefile.Debug
+Makefile.Release
+*.pro.user
+
+# Build outputs
+build-*/
+debug/
+release/
+*.o
+*.obj
+*.ilk
+*.pdb
+
+# Distribution artifacts
+dist/
