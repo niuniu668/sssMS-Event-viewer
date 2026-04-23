@@ -15,6 +15,11 @@ public:
     void setStackedData(const QVector<QVector<double>> &traces, const QStringList &traceNames);
     void clearData();
     bool saveAsPng(const QString &filePath, int width, int height);
+    int visibleStartSample() const;
+    int visibleEndSample() const;
+
+signals:
+    void viewWindowChanged(int startSample, int endSample);
 
 protected:
     void paintEvent(QPaintEvent *event) override;
@@ -58,8 +63,9 @@ private:
     QPoint m_selectStart;
     QPoint m_selectEnd;
 
+    int m_hoverSample = -1;
+    double m_hoverAmp = 0.0;
     bool m_hasHover = false;
-    QString m_hoverText;
 };
 
 #endif
