@@ -20,6 +20,7 @@ void WaveformWidget::setData(const QVector<QVector<double>> &samples, const QStr
     m_channelNames = channelNames;
     m_plotMode = PlotMode::SingleFile;
     resetView();
+    emit viewWindowChanged(visibleStartSample(), visibleEndSample());
     update();
 }
 
@@ -28,6 +29,7 @@ void WaveformWidget::setStackedData(const QVector<QVector<double>> &traces, cons
     m_channelNames = traceNames;
     m_plotMode = PlotMode::Stacked;
     resetView();
+    emit viewWindowChanged(visibleStartSample(), visibleEndSample());
     update();
 }
 
@@ -36,7 +38,24 @@ void WaveformWidget::clearData() {
     m_channelNames.clear();
     m_plotMode = PlotMode::SingleFile;
     resetView();
+    emit viewWindowChanged(0, 0);
     update();
+}
+
+int WaveformWidget::visibleStartSample() const {
+    if (m_samples.isEmpty()) {
+        return 0;
+    }
+    return std::max(0, static_cast<int>(std::floor(m_offsetX)));
+}
+
+int WaveformWidget::visibleEndSample() const {
+    if (m_samples.isEmpty()) {
+        return 0;
+    }
+    const int n = totalSamples();
+    const int end = static_cast<int>(std::ceil(m_offsetX + visibleSampleCount()));
+    return std::clamp(end, 0, std::max(0, n - 1));
 }
 
 bool WaveformWidget::saveAsPng(const QString &filePath, int width, int height) {
@@ -90,8 +109,10 @@ void WaveformWidget::paintEvent(QPaintEvent *event) {
     }
 
     if (m_hasHover) {
-        painter.setPen(QColor(60, 60, 60));
-        painter.drawText(plotRect.left(), plotRect.top() - 6, m_hoverText);
+        painter.setPen(QColor(40, 40, 40));
+        QString hover = QString("sample=%1   AMP=%2").arg(m_hoverSample).arg(m_hoverAmp, 0, 'g', 7);
+        const QRect textRect(plotRect.right() - 320, plotRect.top() + 6, 310, 20);
+        painter.drawText(textRect, Qt::AlignRight | Qt::AlignVCenter, hover);
     }
 }
 
@@ -223,12 +244,14 @@ void WaveformWidget::wheelEvent(QWheelEvent *event) {
     }
 
     update();
+    emit viewWindowChanged(visibleStartSample(), visibleEndSample());
     event->accept();
 }
 
 void WaveformWidget::mousePressEvent(QMouseEvent *event) {
     if (event->button() == Qt::RightButton) {
         resetView();
+        emit viewWindowChanged(visibleStartSample(), visibleEndSample());
         update();
         event->accept();
         return;
@@ -254,6 +277,7 @@ void WaveformWidget::mouseMoveEvent(QMouseEvent *event) {
         const double dx = event->pos().x() - m_dragStart.x();
         const double scale = visibleSampleCount() / std::max(1, m_lastPlotRect.width());
         m_offsetX = clampOffset(m_dragStartOffset - dx * scale);
+        emit viewWindowChanged(visibleStartSample(), visibleEndSample());
         update();
     }
 
@@ -282,6 +306,7 @@ void WaveformWidget::mouseReleaseEvent(QMouseEvent *event) {
                 const int n = totalSamples();
                 m_zoomX = std::clamp(static_cast<double>(n) / span, 1.0, 120.0);
                 m_offsetX = clampOffset(std::min(sx, ex));
+                emit viewWindowChanged(visibleStartSample(), visibleEndSample());
             }
         }
         update();
@@ -409,8 +434,9 @@ void WaveformWidget::resetView() {
     m_offsetX = 0.0;
     m_dragging = false;
     m_selecting = false;
+    m_hoverSample = -1;
+    m_hoverAmp = 0.0;
     m_hasHover = false;
-    m_hoverText.clear();
 }
 
 double WaveformWidget::visibleSampleCount() const {
@@ -440,29 +466,25 @@ double WaveformWidget::pixelToSampleX(int px) const {
 
 void WaveformWidget::updateHoverText(const QPoint &pt) {
     if (!pointInPlot(pt) || m_samples.isEmpty()) {
+        m_hoverSample = -1;
+        m_hoverAmp = 0.0;
         m_hasHover = false;
-        m_hoverText.clear();
         update();
         return;
     }
 
     const int idx = static_cast<int>(std::round(pixelToSampleX(pt.x())));
     m_hasHover = true;
+    m_hoverSample = idx;
 
     if (m_plotMode == PlotMode::Stacked) {
-        m_hoverText = QString("Sample=%1").arg(idx);
+        m_hoverAmp = 0.0;
     } else {
         if (idx < 0 || idx >= m_samples.size()) {
-            m_hoverText = QString("Sample=%1").arg(idx);
+            m_hoverAmp = 0.0;
         } else {
             const QVector<double> &row = m_samples[idx];
-            QStringList parts;
-            parts << QString("Sample=%1").arg(idx);
-            for (int ch = 0; ch < row.size(); ++ch) {
-                const QString name = (ch < m_channelNames.size()) ? m_channelNames[ch] : QString("Ch%1").arg(ch + 1);
-                parts << QString("%1=%2").arg(name).arg(row[ch], 0, 'g', 6);
-            }
-            m_hoverText = parts.join("  ");
+            m_hoverAmp = row.isEmpty() ? 0.0 : row[0];
         }
     }
 

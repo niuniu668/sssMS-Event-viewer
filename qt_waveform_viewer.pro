@@ -5,11 +5,15 @@ CONFIG += c++17
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
+    spectrogramwidget.cpp \
+    spectrumwidget.cpp \
     waveformreader.cpp \
     waveformwidget.cpp
 
 HEADERS += \
     mainwindow.h \
+    spectrogramwidget.h \
+    spectrumwidget.h \
     waveformreader.h \
     waveformwidget.h
 
