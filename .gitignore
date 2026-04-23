@@ -16,3 +16,6 @@ release/
 
 # Distribution artifacts
 dist/
+!dist/
+dist/*
+!dist/QtWaveformViewer-win64.zip
