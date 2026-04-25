@@ -1,6 +1,7 @@
 QT += core gui widgets
 
 CONFIG += c++17
+CONFIG += no_moc_predefs
 
 SOURCES += \
     main.cpp \

@@ -36,13 +36,18 @@ namespace {
 struct qt_meta_stringdata_CLASSMainWindowENDCLASS_t {};
 constexpr auto qt_meta_stringdata_CLASSMainWindowENDCLASS = QtMocHelpers::stringData(
     "MainWindow",
-    "browseFolder",
+    "browseEventFolder",
     "",
-    "loadFolder",
-    "onFolderItemClicked",
+    "browseDataEventFolder",
+    "browseDataFolder",
+    "loadEventFolder",
+    "loadDataFolder",
+    "onEventFolderItemClicked",
     "QListWidgetItem*",
     "item",
-    "onFileItemClicked",
+    "onDataFolderItemClicked",
+    "onEventFileItemClicked",
+    "onDataFileItemClicked",
     "onWaveViewChanged",
     "startSample",
     "endSample",
@@ -52,7 +57,8 @@ constexpr auto qt_meta_stringdata_CLASSMainWindowENDCLASS = QtMocHelpers::string
     "exportCurrentPng",
     "exportOverviewPng",
     "previewStacked",
-    "exportStackedPng"
+    "exportStackedPng",
+    "showFullWaveform"
 );
 #else  // !QT_MOC_HAS_STRINGDATA
 #error "qtmochelpers.h not found or too old."
@@ -65,7 +71,7 @@ Q_CONSTINIT static const uint qt_meta_data_CLASSMainWindowENDCLASS[] = {
       12,       // revision
        0,       // classname
        0,    0, // classinfo
-      11,   14, // methods
+      17,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -73,26 +79,38 @@ Q_CONSTINIT static const uint qt_meta_data_CLASSMainWindowENDCLASS[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags, initial metatype offsets
-       1,    0,   80,    2, 0x08,    1 /* Private */,
-       3,    0,   81,    2, 0x08,    2 /* Private */,
-       4,    1,   82,    2, 0x08,    3 /* Private */,
-       7,    1,   85,    2, 0x08,    5 /* Private */,
-       8,    2,   88,    2, 0x08,    7 /* Private */,
-      11,    1,   93,    2, 0x08,   10 /* Private */,
-      13,    1,   96,    2, 0x08,   12 /* Private */,
-      14,    0,   99,    2, 0x08,   14 /* Private */,
-      15,    0,  100,    2, 0x08,   15 /* Private */,
-      16,    0,  101,    2, 0x08,   16 /* Private */,
-      17,    0,  102,    2, 0x08,   17 /* Private */,
+       1,    0,  116,    2, 0x08,    1 /* Private */,
+       3,    0,  117,    2, 0x08,    2 /* Private */,
+       4,    0,  118,    2, 0x08,    3 /* Private */,
+       5,    0,  119,    2, 0x08,    4 /* Private */,
+       6,    0,  120,    2, 0x08,    5 /* Private */,
+       7,    1,  121,    2, 0x08,    6 /* Private */,
+      10,    1,  124,    2, 0x08,    8 /* Private */,
+      11,    1,  127,    2, 0x08,   10 /* Private */,
+      12,    1,  130,    2, 0x08,   12 /* Private */,
+      13,    2,  133,    2, 0x08,   14 /* Private */,
+      16,    1,  138,    2, 0x08,   17 /* Private */,
+      18,    1,  141,    2, 0x08,   19 /* Private */,
+      19,    0,  144,    2, 0x08,   21 /* Private */,
+      20,    0,  145,    2, 0x08,   22 /* Private */,
+      21,    0,  146,    2, 0x08,   23 /* Private */,
+      22,    0,  147,    2, 0x08,   24 /* Private */,
+      23,    0,  148,    2, 0x08,   25 /* Private */,
 
  // slots: parameters
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, 0x80000000 | 5,    6,
-    QMetaType::Void, 0x80000000 | 5,    6,
-    QMetaType::Void, QMetaType::Int, QMetaType::Int,    9,   10,
-    QMetaType::Void, QMetaType::Bool,   12,
-    QMetaType::Void, QMetaType::Bool,   12,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void, 0x80000000 | 8,    9,
+    QMetaType::Void, 0x80000000 | 8,    9,
+    QMetaType::Void, 0x80000000 | 8,    9,
+    QMetaType::Void, 0x80000000 | 8,    9,
+    QMetaType::Void, QMetaType::Int, QMetaType::Int,   14,   15,
+    QMetaType::Void, QMetaType::Bool,   17,
+    QMetaType::Void, QMetaType::Bool,   17,
+    QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
@@ -110,14 +128,26 @@ Q_CONSTINIT const QMetaObject MainWindow::staticMetaObject = { {
     qt_incomplete_metaTypeArray<qt_meta_stringdata_CLASSMainWindowENDCLASS_t,
         // Q_OBJECT / Q_GADGET
         QtPrivate::TypeAndForceComplete<MainWindow, std::true_type>,
-        // method 'browseFolder'
+        // method 'browseEventFolder'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        // method 'loadFolder'
+        // method 'browseDataEventFolder'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        // method 'onFolderItemClicked'
+        // method 'browseDataFolder'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'loadEventFolder'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'loadDataFolder'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'onEventFolderItemClicked'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         QtPrivate::TypeAndForceComplete<QListWidgetItem *, std::false_type>,
-        // method 'onFileItemClicked'
+        // method 'onDataFolderItemClicked'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<QListWidgetItem *, std::false_type>,
+        // method 'onEventFileItemClicked'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<QListWidgetItem *, std::false_type>,
+        // method 'onDataFileItemClicked'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         QtPrivate::TypeAndForceComplete<QListWidgetItem *, std::false_type>,
         // method 'onWaveViewChanged'
@@ -137,6 +167,8 @@ Q_CONSTINIT const QMetaObject MainWindow::staticMetaObject = { {
         // method 'previewStacked'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'exportStackedPng'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'showFullWaveform'
         QtPrivate::TypeAndForceComplete<void, std::false_type>
     >,
     nullptr
@@ -148,17 +180,23 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         auto *_t = static_cast<MainWindow *>(_o);
         (void)_t;
         switch (_id) {
-        case 0: _t->browseFolder(); break;
-        case 1: _t->loadFolder(); break;
-        case 2: _t->onFolderItemClicked((*reinterpret_cast< std::add_pointer_t<QListWidgetItem*>>(_a[1]))); break;
-        case 3: _t->onFileItemClicked((*reinterpret_cast< std::add_pointer_t<QListWidgetItem*>>(_a[1]))); break;
-        case 4: _t->onWaveViewChanged((*reinterpret_cast< std::add_pointer_t<int>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[2]))); break;
-        case 5: _t->onShowSpectrumChanged((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1]))); break;
-        case 6: _t->onShowSpectrogramChanged((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1]))); break;
-        case 7: _t->exportCurrentPng(); break;
-        case 8: _t->exportOverviewPng(); break;
-        case 9: _t->previewStacked(); break;
-        case 10: _t->exportStackedPng(); break;
+        case 0: _t->browseEventFolder(); break;
+        case 1: _t->browseDataEventFolder(); break;
+        case 2: _t->browseDataFolder(); break;
+        case 3: _t->loadEventFolder(); break;
+        case 4: _t->loadDataFolder(); break;
+        case 5: _t->onEventFolderItemClicked((*reinterpret_cast< std::add_pointer_t<QListWidgetItem*>>(_a[1]))); break;
+        case 6: _t->onDataFolderItemClicked((*reinterpret_cast< std::add_pointer_t<QListWidgetItem*>>(_a[1]))); break;
+        case 7: _t->onEventFileItemClicked((*reinterpret_cast< std::add_pointer_t<QListWidgetItem*>>(_a[1]))); break;
+        case 8: _t->onDataFileItemClicked((*reinterpret_cast< std::add_pointer_t<QListWidgetItem*>>(_a[1]))); break;
+        case 9: _t->onWaveViewChanged((*reinterpret_cast< std::add_pointer_t<int>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[2]))); break;
+        case 10: _t->onShowSpectrumChanged((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1]))); break;
+        case 11: _t->onShowSpectrogramChanged((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1]))); break;
+        case 12: _t->exportCurrentPng(); break;
+        case 13: _t->exportOverviewPng(); break;
+        case 14: _t->previewStacked(); break;
+        case 15: _t->exportStackedPng(); break;
+        case 16: _t->showFullWaveform(); break;
         default: ;
         }
     }
@@ -183,13 +221,13 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 11)
+        if (_id < 17)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 11;
+        _id -= 17;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 11)
+        if (_id < 17)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 11;
+        _id -= 17;
     }
     return _id;
 }

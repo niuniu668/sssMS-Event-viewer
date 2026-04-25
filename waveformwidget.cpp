@@ -144,7 +144,19 @@ void WaveformWidget::drawSingleFileWaveforms(QPainter &painter, const QRect &plo
     painter.setPen(QPen(QColor(160, 160, 160), 1));
     painter.drawLine(plotRect.bottomLeft(), plotRect.bottomRight());
 
-    const int xTickCount = 6;
+    // Calculate optimal tick count based on visible samples
+    const int visibleSamples = iEnd - iStart + 1;
+    int xTickCount = 6;
+    if (visibleSamples <= 1000) {
+        xTickCount = 5;
+    } else if (visibleSamples <= 2000) {
+        xTickCount = 6;
+    } else if (visibleSamples <= 4000) {
+        xTickCount = 8;
+    } else {
+        xTickCount = 10;
+    }
+
     for (int t = 0; t <= xTickCount; ++t) {
         const double ratio = static_cast<double>(t) / xTickCount;
         const int x = plotRect.left() + static_cast<int>(ratio * plotRect.width());
@@ -199,8 +211,20 @@ void WaveformWidget::drawSingleFileWaveforms(QPainter &painter, const QRect &plo
         painter.setPen(Qt::darkGray);
         const QString name = (ch < m_channelNames.size()) ? m_channelNames[ch] : QString("Ch%1").arg(ch + 1);
         painter.drawText(8, static_cast<int>(bandTop + 18), name);
-        painter.drawText(plotRect.left() - 66, static_cast<int>(bandTop + 14), 58, 14, Qt::AlignRight | Qt::AlignVCenter, QString::number(maxV, 'g', 5));
-        painter.drawText(plotRect.left() - 66, static_cast<int>(bandBottom - 2), 58, 14, Qt::AlignRight | Qt::AlignVCenter, QString::number(minV, 'g', 5));
+        painter.drawText(plotRect.left() - 66, static_cast<int>(bandTop + 14), 58, 14, Qt::AlignRight | Qt::AlignVCenter, QString::number(maxV, 'g', 4));
+        painter.drawText(plotRect.left() - 66, static_cast<int>(bandBottom - 2), 58, 14, Qt::AlignRight | Qt::AlignVCenter, QString::number(minV, 'g', 4));
+
+        // Add intermediate tick marks
+        const int yTickCount = 3;
+        for (int t = 1; t < yTickCount; ++t) {
+            const double yRatio = static_cast<double>(t) / yTickCount;
+            const double yVal = minV + yRatio * range;
+            const double y = bandTop + (1.0 - yRatio) * (bandHeight * 0.85) + bandHeight * 0.075;
+            painter.setPen(QPen(QColor(200, 200, 200), 1));
+            painter.drawLine(plotRect.left(), static_cast<int>(y), plotRect.right(), static_cast<int>(y));
+            painter.setPen(Qt::darkGray);
+            painter.drawText(plotRect.left() - 66, static_cast<int>(y + 4), 58, 14, Qt::AlignRight | Qt::AlignVCenter, QString::number(yVal, 'g', 3));
+        }
 
         if (minV <= 0.0 && maxV >= 0.0) {
             const double zeroY = bandTop + (1.0 - (0.0 - minV) / range) * (bandHeight * 0.85) + bandHeight * 0.075;

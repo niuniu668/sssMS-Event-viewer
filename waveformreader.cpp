@@ -2,6 +2,8 @@
 
 #include <QFile>
 #include <QFileInfo>
+#include <QTextStream>
+#include <QRegularExpression>
 #include <cstring>
 
 bool WaveformReader::readWaveFile(const QString &filePath, WaveData &outData, QString &error) {
@@ -55,3 +57,65 @@ bool WaveformReader::readWaveFile(const QString &filePath, WaveData &outData, QS
 
     return true;
 }
+
+bool WaveformReader::readTextWaveFile(const QString &filePath, WaveData &outData, QString &error) {
+    outData = WaveData{};
+
+    QFileInfo fi(filePath);
+    if (!fi.exists() || !fi.isFile()) {
+        error = QString("File does not exist: %1").arg(filePath);
+        return false;
+    }
+
+    QFile f(filePath);
+    if (!f.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        error = QString("Cannot open text file: %1").arg(filePath);
+        return false;
+    }
+
+    QVector<QVector<double>> samples;
+    bool isThreeComp = false;
+    int lineCount = 0;
+
+    QTextStream in(&f);
+    QRegularExpression re("[,\\s]+");
+    while (!in.atEnd()) {
+        QString line = in.readLine().trimmed();
+        if (line.isEmpty()) continue;
+        
+        QStringList parts = line.split(re, Qt::SkipEmptyParts);
+        if (parts.isEmpty()) continue;
+
+        QVector<double> vals;
+        for (const QString &s : parts) {
+            bool ok;
+            double d = s.toDouble(&ok);
+            if (ok) vals.push_back(d);
+        }
+
+        if (vals.isEmpty()) continue;
+
+        if (lineCount == 0) {
+            isThreeComp = (vals.size() >= 3);
+            outData.isThreeComponent = isThreeComp;
+        }
+
+        QVector<double> sample(isThreeComp ? 3 : 1, 0.0);
+        for (int i = 0; i < qMin((int)vals.size(), isThreeComp ? 3 : 1); ++i) {
+            sample[i] = vals[i];
+        }
+        samples.push_back(sample);
+        lineCount++;
+    }
+    
+    f.close();
+    
+    if (samples.isEmpty()) {
+        error = QString("No data found in text file: %1").arg(filePath);
+        return false;
+    }
+    
+    outData.samples = samples;
+    return true;
+}
+

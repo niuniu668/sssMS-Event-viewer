@@ -12,6 +12,7 @@ struct WaveData {
 class WaveformReader {
 public:
     static bool readWaveFile(const QString &filePath, WaveData &outData, QString &error);
+    static bool readTextWaveFile(const QString &filePath, WaveData &outData, QString &error);
 };
 
 #endif
