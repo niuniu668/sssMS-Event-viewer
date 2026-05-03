@@ -1,16 +1,26 @@
 @echo off
 setlocal
 
-set APP_DIR=%~dp0dist\QtWaveformViewer
-if not exist "%APP_DIR%\QtWaveformViewer.exe" (
-  echo [ERROR] Cannot find executable: "%APP_DIR%\QtWaveformViewer.exe"
+set "REPO_DIR=%~dp0"
+call "%REPO_DIR%scripts\build_env.bat"
+
+rem Prefer release build if present, otherwise use deployed dist
+if exist "%REPO_DIR%release\QtWaveformViewer.exe" (
+  set "APP_EXE=%REPO_DIR%release\QtWaveformViewer.exe"
+) else if exist "%REPO_DIR%dist\QtWaveformViewer\QtWaveformViewer.exe" (
+  set "APP_EXE=%REPO_DIR%dist\QtWaveformViewer\QtWaveformViewer.exe"
+) else (
+  echo [ERROR] Cannot find QtWaveformViewer.exe in release/ or dist/QtWaveformViewer/
   pause
   exit /b 1
 )
 
-cd /d "%APP_DIR%"
-echo Launching: %CD%\QtWaveformViewer.exe
-QtWaveformViewer.exe
+rem Ensure runtime paths prefer pinned MinGW/Qt
+set "PATH=%MINGW_DIR%;%QTDIR%\bin;%PATH%"
+
+echo Launching: %APP_EXE%
+cd /d "%~dp0"
+"%APP_EXE%"
 echo.
 echo Process exited with code: %ERRORLEVEL%
 pause

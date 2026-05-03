@@ -4,6 +4,7 @@ param(
     [string]$DistRoot = "dist",
     [switch]$SkipZip,
     [string]$WindeployqtPath,
+    [string]$QtDir = "C:\Qt\6.7.3\mingw_64",
     [switch]$KeepTemp
 )
 
@@ -15,11 +16,21 @@ function Resolve-AbsolutePath {
 }
 
 function Find-Windeployqt {
-    param([string]$UserProvidedPath)
+    param(
+        [string]$UserProvidedPath,
+        [string]$FixedQtDir
+    )
 
     if ($UserProvidedPath) {
         $resolved = Resolve-Path -LiteralPath $UserProvidedPath -ErrorAction Stop
         return $resolved.Path
+    }
+
+    if ($FixedQtDir) {
+        $candidate = Join-Path $FixedQtDir "bin\windeployqt.exe"
+        if (Test-Path -LiteralPath $candidate) {
+            return $candidate
+        }
     }
 
     $cmd = Get-Command windeployqt -ErrorAction SilentlyContinue
@@ -74,9 +85,9 @@ if (-not (Test-Path -LiteralPath $resolvedExePath)) {
     throw "Executable does not exist: $resolvedExePath"
 }
 
-$windeployqt = Find-Windeployqt -UserProvidedPath $WindeployqtPath
+$windeployqt = Find-Windeployqt -UserProvidedPath $WindeployqtPath -FixedQtDir $QtDir
 if (-not $windeployqt) {
-    throw "Cannot find windeployqt. Run this in a Qt command prompt, or add Qt/bin to PATH."
+    throw "Cannot find windeployqt under $QtDir. Check that the Qt 6.7.3 MinGW toolchain is installed at that path, or pass -WindeployqtPath explicitly."
 }
 
 $distRootPath = Join-Path $repoRoot $DistRoot

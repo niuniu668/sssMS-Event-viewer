@@ -2,8 +2,7 @@
 setlocal
 
 set "PROJECT_DIR=%~dp0"
-set "QTDIR=C:\Qt\6.7.3\mingw_64"
-set "MINGW_DIR=C:\Qt\Tools\mingw1120_64\bin"
+call "%PROJECT_DIR%scripts\build_env.bat"
 
 if not exist "%QTDIR%\bin\qmake.exe" (
   echo [ERROR] qmake not found: %QTDIR%\bin\qmake.exe

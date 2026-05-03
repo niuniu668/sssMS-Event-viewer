@@ -10,7 +10,7 @@
 ## 使用步骤
 
 1. 先用 Release 模式编译项目，得到 QtWaveformViewer.exe。
-2. 打开 Qt 命令行终端（确保可用 windeployqt）。
+2. 使用固定的 Qt 6.7.3 MinGW 目录执行打包脚本，不要依赖系统 PATH。
 3. 在仓库根目录运行：
 
 ```powershell
@@ -31,14 +31,18 @@
 	-WindeployqtPath "C:\Qt\6.6.3\mingw_64\bin\windeployqt.exe"
 ```
 
+
+## 统一构建环境
+
+仓库新增了统一环境脚本 `scripts/build_env.bat`，用于集中管理构建使用的 `QTDIR` 和 `MINGW_DIR`：
+
+- 默认值指向 `C:\Qt\6.7.3\mingw_64` 和 `C:\Qt\Tools\mingw1120_64\bin`。
+- 可通过设置环境变量 `REPO_QTDIR` 和 `REPO_MINGW_DIR` 来覆盖默认路径，或直接编辑 `scripts/build_env.bat`。
+
+构建时和打包时的脚本会自动调用该文件来确保使用一致的 Qt + MinGW 组合，避免工具链混用导致的运行时崩溃。
+
 ## 分发建议
 
-- 直接把 dist/QtWaveformViewer-win64.zip 发给他人。
-- 或把 dist/QtWaveformViewer 整个目录打包分发。
-- 接收方无需安装 Qt，即可运行目录中的 QtWaveformViewer.exe。
 
 ## 注意
 
-- 必须在与编译器匹配的 Qt 环境下执行 windeployqt。
-- windeployqt 的 Qt 主版本必须和你的 exe 一致（Qt6 程序要用 Qt6 的 windeployqt）。
-- 若目标机器缺少 VC 运行库，脚本使用 --compiler-runtime 会一并拷贝常见运行时依赖。
