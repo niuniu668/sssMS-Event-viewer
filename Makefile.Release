@@ -318,8 +318,12 @@ release/moc_mainwindow.cpp: mainwindow.h \
 		C:/Qt/6.7.3/mingw_64/include/QtCore/qdatetime.h \
 		C:/Qt/6.7.3/mingw_64/include/QtCore/qcalendar.h \
 		C:/Qt/6.7.3/mingw_64/include/QtCore/QMap \
+		waveformwidget.h \
+		C:/Qt/6.7.3/mingw_64/include/QtWidgets/QWidget \
+		C:/Qt/6.7.3/mingw_64/include/QtCore/QVector \
+		C:/Qt/6.7.3/mingw_64/include/QtCore/qvector.h \
 		C:/Qt/6.7.3/mingw_64/bin/moc.exe
-	C:\Qt\6.7.3\mingw_64\bin\moc.exe $(DEFINES) -D__GNUC__ -D_WIN32 -D__cplusplus=201703L -D__GNUC__=11 -D__GNUC_MINOR__=2 -D__GNUC_PATCHLEVEL__=0 -IC:/Qt/6.7.3/mingw_64/mkspecs/win32-g++ -ID:/4.code/0.daily/pythonProject/画图代码/波形查看软件/qt_waveform_viewer -IC:/Qt/6.7.3/mingw_64/include -IC:/Qt/6.7.3/mingw_64/include/QtWidgets -IC:/Qt/6.7.3/mingw_64/include/QtGui -IC:/Qt/6.7.3/mingw_64/include/QtCore -IC:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++ -IC:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/x86_64-w64-mingw32 -IC:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/backward -IC:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include -IC:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include-fixed -IC:/Qt/Tools/mingw1120_64/x86_64-w64-mingw32/include mainwindow.h -o release\moc_mainwindow.cpp
+	C:\Qt\6.7.3\mingw_64\bin\moc.exe $(DEFINES) -D__GNUC__ -D_WIN32 -D__cplusplus=201703L -D__GNUC__=11 -D__GNUC_MINOR__=2 -D__GNUC_PATCHLEVEL__=0 -IC:/Qt/6.7.3/mingw_64/mkspecs/win32-g++ -ID:/4.code/0.daily/pythonProject/program_self/sssMS-Event-viewer -IC:/Qt/6.7.3/mingw_64/include -IC:/Qt/6.7.3/mingw_64/include/QtWidgets -IC:/Qt/6.7.3/mingw_64/include/QtGui -IC:/Qt/6.7.3/mingw_64/include/QtCore -IC:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++ -IC:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/x86_64-w64-mingw32 -IC:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/backward -IC:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include -IC:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include-fixed -IC:/Qt/Tools/mingw1120_64/x86_64-w64-mingw32/include mainwindow.h -o release\moc_mainwindow.cpp
 
 release/moc_spectrogramwidget.cpp: spectrogramwidget.h \
 		C:/Qt/6.7.3/mingw_64/include/QtGui/QImage \
@@ -512,7 +516,7 @@ release/moc_spectrogramwidget.cpp: spectrogramwidget.h \
 		C:/Qt/6.7.3/mingw_64/include/QtCore/QVector \
 		C:/Qt/6.7.3/mingw_64/include/QtCore/qvector.h \
 		C:/Qt/6.7.3/mingw_64/bin/moc.exe
-	C:\Qt\6.7.3\mingw_64\bin\moc.exe $(DEFINES) -D__GNUC__ -D_WIN32 -D__cplusplus=201703L -D__GNUC__=11 -D__GNUC_MINOR__=2 -D__GNUC_PATCHLEVEL__=0 -IC:/Qt/6.7.3/mingw_64/mkspecs/win32-g++ -ID:/4.code/0.daily/pythonProject/画图代码/波形查看软件/qt_waveform_viewer -IC:/Qt/6.7.3/mingw_64/include -IC:/Qt/6.7.3/mingw_64/include/QtWidgets -IC:/Qt/6.7.3/mingw_64/include/QtGui -IC:/Qt/6.7.3/mingw_64/include/QtCore -IC:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++ -IC:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/x86_64-w64-mingw32 -IC:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/backward -IC:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include -IC:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include-fixed -IC:/Qt/Tools/mingw1120_64/x86_64-w64-mingw32/include spectrogramwidget.h -o release\moc_spectrogramwidget.cpp
+	C:\Qt\6.7.3\mingw_64\bin\moc.exe $(DEFINES) -D__GNUC__ -D_WIN32 -D__cplusplus=201703L -D__GNUC__=11 -D__GNUC_MINOR__=2 -D__GNUC_PATCHLEVEL__=0 -IC:/Qt/6.7.3/mingw_64/mkspecs/win32-g++ -ID:/4.code/0.daily/pythonProject/program_self/sssMS-Event-viewer -IC:/Qt/6.7.3/mingw_64/include -IC:/Qt/6.7.3/mingw_64/include/QtWidgets -IC:/Qt/6.7.3/mingw_64/include/QtGui -IC:/Qt/6.7.3/mingw_64/include/QtCore -IC:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++ -IC:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/x86_64-w64-mingw32 -IC:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/backward -IC:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include -IC:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include-fixed -IC:/Qt/Tools/mingw1120_64/x86_64-w64-mingw32/include spectrogramwidget.h -o release\moc_spectrogramwidget.cpp
 
 release/moc_spectrumwidget.cpp: spectrumwidget.h \
 		C:/Qt/6.7.3/mingw_64/include/QtWidgets/QWidget \
@@ -704,7 +708,7 @@ release/moc_spectrumwidget.cpp: spectrumwidget.h \
 		C:/Qt/6.7.3/mingw_64/include/QtCore/QVector \
 		C:/Qt/6.7.3/mingw_64/include/QtCore/qvector.h \
 		C:/Qt/6.7.3/mingw_64/bin/moc.exe
-	C:\Qt\6.7.3\mingw_64\bin\moc.exe $(DEFINES) -D__GNUC__ -D_WIN32 -D__cplusplus=201703L -D__GNUC__=11 -D__GNUC_MINOR__=2 -D__GNUC_PATCHLEVEL__=0 -IC:/Qt/6.7.3/mingw_64/mkspecs/win32-g++ -ID:/4.code/0.daily/pythonProject/画图代码/波形查看软件/qt_waveform_viewer -IC:/Qt/6.7.3/mingw_64/include -IC:/Qt/6.7.3/mingw_64/include/QtWidgets -IC:/Qt/6.7.3/mingw_64/include/QtGui -IC:/Qt/6.7.3/mingw_64/include/QtCore -IC:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++ -IC:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/x86_64-w64-mingw32 -IC:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/backward -IC:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include -IC:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include-fixed -IC:/Qt/Tools/mingw1120_64/x86_64-w64-mingw32/include spectrumwidget.h -o release\moc_spectrumwidget.cpp
+	C:\Qt\6.7.3\mingw_64\bin\moc.exe $(DEFINES) -D__GNUC__ -D_WIN32 -D__cplusplus=201703L -D__GNUC__=11 -D__GNUC_MINOR__=2 -D__GNUC_PATCHLEVEL__=0 -IC:/Qt/6.7.3/mingw_64/mkspecs/win32-g++ -ID:/4.code/0.daily/pythonProject/program_self/sssMS-Event-viewer -IC:/Qt/6.7.3/mingw_64/include -IC:/Qt/6.7.3/mingw_64/include/QtWidgets -IC:/Qt/6.7.3/mingw_64/include/QtGui -IC:/Qt/6.7.3/mingw_64/include/QtCore -IC:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++ -IC:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/x86_64-w64-mingw32 -IC:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/backward -IC:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include -IC:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include-fixed -IC:/Qt/Tools/mingw1120_64/x86_64-w64-mingw32/include spectrumwidget.h -o release\moc_spectrumwidget.cpp
 
 release/moc_waveformwidget.cpp: waveformwidget.h \
 		C:/Qt/6.7.3/mingw_64/include/QtWidgets/QWidget \
@@ -897,7 +901,7 @@ release/moc_waveformwidget.cpp: waveformwidget.h \
 		C:/Qt/6.7.3/mingw_64/include/QtCore/qvector.h \
 		C:/Qt/6.7.3/mingw_64/include/QtCore/QStringList \
 		C:/Qt/6.7.3/mingw_64/bin/moc.exe
-	C:\Qt\6.7.3\mingw_64\bin\moc.exe $(DEFINES) -D__GNUC__ -D_WIN32 -D__cplusplus=201703L -D__GNUC__=11 -D__GNUC_MINOR__=2 -D__GNUC_PATCHLEVEL__=0 -IC:/Qt/6.7.3/mingw_64/mkspecs/win32-g++ -ID:/4.code/0.daily/pythonProject/画图代码/波形查看软件/qt_waveform_viewer -IC:/Qt/6.7.3/mingw_64/include -IC:/Qt/6.7.3/mingw_64/include/QtWidgets -IC:/Qt/6.7.3/mingw_64/include/QtGui -IC:/Qt/6.7.3/mingw_64/include/QtCore -IC:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++ -IC:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/x86_64-w64-mingw32 -IC:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/backward -IC:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include -IC:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include-fixed -IC:/Qt/Tools/mingw1120_64/x86_64-w64-mingw32/include waveformwidget.h -o release\moc_waveformwidget.cpp
+	C:\Qt\6.7.3\mingw_64\bin\moc.exe $(DEFINES) -D__GNUC__ -D_WIN32 -D__cplusplus=201703L -D__GNUC__=11 -D__GNUC_MINOR__=2 -D__GNUC_PATCHLEVEL__=0 -IC:/Qt/6.7.3/mingw_64/mkspecs/win32-g++ -ID:/4.code/0.daily/pythonProject/program_self/sssMS-Event-viewer -IC:/Qt/6.7.3/mingw_64/include -IC:/Qt/6.7.3/mingw_64/include/QtWidgets -IC:/Qt/6.7.3/mingw_64/include/QtGui -IC:/Qt/6.7.3/mingw_64/include/QtCore -IC:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++ -IC:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/x86_64-w64-mingw32 -IC:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/backward -IC:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include -IC:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include-fixed -IC:/Qt/Tools/mingw1120_64/x86_64-w64-mingw32/include waveformwidget.h -o release\moc_waveformwidget.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
@@ -1112,7 +1116,11 @@ release/main.o: main.cpp C:/Qt/6.7.3/mingw_64/include/QtWidgets/QApplication \
 		C:/Qt/6.7.3/mingw_64/include/QtCore/QDateTime \
 		C:/Qt/6.7.3/mingw_64/include/QtCore/qdatetime.h \
 		C:/Qt/6.7.3/mingw_64/include/QtCore/qcalendar.h \
-		C:/Qt/6.7.3/mingw_64/include/QtCore/QMap
+		C:/Qt/6.7.3/mingw_64/include/QtCore/QMap \
+		waveformwidget.h \
+		C:/Qt/6.7.3/mingw_64/include/QtWidgets/QWidget \
+		C:/Qt/6.7.3/mingw_64/include/QtCore/QVector \
+		C:/Qt/6.7.3/mingw_64/include/QtCore/qvector.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\main.o main.cpp
 
 release/mainwindow.o: mainwindow.cpp mainwindow.h \
@@ -1309,15 +1317,15 @@ release/mainwindow.o: mainwindow.cpp mainwindow.h \
 		C:/Qt/6.7.3/mingw_64/include/QtCore/qdatetime.h \
 		C:/Qt/6.7.3/mingw_64/include/QtCore/qcalendar.h \
 		C:/Qt/6.7.3/mingw_64/include/QtCore/QMap \
-		spectrogramwidget.h \
-		C:/Qt/6.7.3/mingw_64/include/QtGui/QImage \
+		waveformwidget.h \
 		C:/Qt/6.7.3/mingw_64/include/QtWidgets/QWidget \
 		C:/Qt/6.7.3/mingw_64/include/QtCore/QVector \
 		C:/Qt/6.7.3/mingw_64/include/QtCore/qvector.h \
+		spectrogramwidget.h \
+		C:/Qt/6.7.3/mingw_64/include/QtGui/QImage \
 		spectrumwidget.h \
 		waveformreader.h \
 		C:/Qt/6.7.3/mingw_64/include/QtCore/QString \
-		waveformwidget.h \
 		C:/Qt/6.7.3/mingw_64/include/QtWidgets/QVBoxLayout \
 		C:/Qt/6.7.3/mingw_64/include/QtWidgets/qboxlayout.h \
 		C:/Qt/6.7.3/mingw_64/include/QtWidgets/qlayout.h \
@@ -1358,6 +1366,16 @@ release/mainwindow.o: mainwindow.cpp mainwindow.h \
 		C:/Qt/6.7.3/mingw_64/include/QtWidgets/qtabbar.h \
 		C:/Qt/6.7.3/mingw_64/include/QtWidgets/qrubberband.h \
 		C:/Qt/6.7.3/mingw_64/include/QtWidgets/QListWidgetItem \
+		C:/Qt/6.7.3/mingw_64/include/QtWidgets/QComboBox \
+		C:/Qt/6.7.3/mingw_64/include/QtWidgets/qcombobox.h \
+		C:/Qt/6.7.3/mingw_64/include/QtWidgets/QTableWidget \
+		C:/Qt/6.7.3/mingw_64/include/QtWidgets/qtablewidget.h \
+		C:/Qt/6.7.3/mingw_64/include/QtWidgets/qtableview.h \
+		C:/Qt/6.7.3/mingw_64/include/QtWidgets/QHeaderView \
+		C:/Qt/6.7.3/mingw_64/include/QtWidgets/qheaderview.h \
+		C:/Qt/6.7.3/mingw_64/include/QtWidgets/QSpinBox \
+		C:/Qt/6.7.3/mingw_64/include/QtWidgets/qspinbox.h \
+		C:/Qt/6.7.3/mingw_64/include/QtWidgets/QDoubleSpinBox \
 		C:/Qt/6.7.3/mingw_64/include/QtWidgets/QFileDialog \
 		C:/Qt/6.7.3/mingw_64/include/QtWidgets/qfiledialog.h \
 		C:/Qt/6.7.3/mingw_64/include/QtCore/qdir.h \
@@ -1370,6 +1388,18 @@ release/mainwindow.o: mainwindow.cpp mainwindow.h \
 		C:/Qt/6.7.3/mingw_64/include/QtCore/QDirIterator \
 		C:/Qt/6.7.3/mingw_64/include/QtCore/qdiriterator.h \
 		C:/Qt/6.7.3/mingw_64/include/QtCore/QFileInfo \
+		C:/Qt/6.7.3/mingw_64/include/QtCore/QFile \
+		C:/Qt/6.7.3/mingw_64/include/QtCore/QTextStream \
+		C:/Qt/6.7.3/mingw_64/include/QtCore/QJsonArray \
+		C:/Qt/6.7.3/mingw_64/include/QtCore/qjsonarray.h \
+		C:/Qt/6.7.3/mingw_64/include/QtCore/qjsonvalue.h \
+		C:/Qt/6.7.3/mingw_64/include/QtCore/qcborvalue.h \
+		C:/Qt/6.7.3/mingw_64/include/QtCore/qcborcommon.h \
+		C:/Qt/6.7.3/mingw_64/include/QtCore/quuid.h \
+		C:/Qt/6.7.3/mingw_64/include/QtCore/QJsonDocument \
+		C:/Qt/6.7.3/mingw_64/include/QtCore/qjsondocument.h \
+		C:/Qt/6.7.3/mingw_64/include/QtCore/QJsonObject \
+		C:/Qt/6.7.3/mingw_64/include/QtCore/qjsonobject.h \
 		C:/Qt/6.7.3/mingw_64/include/QtWidgets/QMessageBox \
 		C:/Qt/6.7.3/mingw_64/include/QtWidgets/qmessagebox.h \
 		C:/Qt/6.7.3/mingw_64/include/QtWidgets/qdialogbuttonbox.h \
@@ -1383,8 +1413,32 @@ release/mainwindow.o: mainwindow.cpp mainwindow.h \
 		C:/Qt/6.7.3/mingw_64/include/QtCore/qtimer.h \
 		C:/Qt/6.7.3/mingw_64/include/QtCore/qbasictimer.h \
 		C:/Qt/6.7.3/mingw_64/include/QtWidgets/QTabWidget \
+		C:/Qt/6.7.3/mingw_64/include/QtWidgets/QDockWidget \
+		C:/Qt/6.7.3/mingw_64/include/QtWidgets/qdockwidget.h \
+		C:/Qt/6.7.3/mingw_64/include/QtWidgets/QGroupBox \
+		C:/Qt/6.7.3/mingw_64/include/QtWidgets/qgroupbox.h \
+		C:/Qt/6.7.3/mingw_64/include/QtWidgets/QApplication \
+		C:/Qt/6.7.3/mingw_64/include/QtWidgets/qapplication.h \
+		C:/Qt/6.7.3/mingw_64/include/QtWidgets/QStyleFactory \
+		C:/Qt/6.7.3/mingw_64/include/QtWidgets/qstylefactory.h \
+		C:/Qt/6.7.3/mingw_64/include/QtWidgets/QScrollArea \
+		C:/Qt/6.7.3/mingw_64/include/QtWidgets/qscrollarea.h \
 		C:/Qt/6.7.3/mingw_64/include/QtCore/QSet \
-		C:/Qt/6.7.3/mingw_64/include/QtCore/QRegularExpression
+		C:/Qt/6.7.3/mingw_64/include/QtGui/QShortcut \
+		C:/Qt/6.7.3/mingw_64/include/QtGui/qshortcut.h \
+		C:/Qt/6.7.3/mingw_64/include/QtWidgets/QMenu \
+		C:/Qt/6.7.3/mingw_64/include/QtWidgets/qmenu.h \
+		C:/Qt/6.7.3/mingw_64/include/QtGui/QAction \
+		C:/Qt/6.7.3/mingw_64/include/QtGui/QKeySequence \
+		C:/Qt/6.7.3/mingw_64/include/QtCore/QRegularExpression \
+		C:/Qt/6.7.3/mingw_64/include/QtCore/QSettings \
+		C:/Qt/6.7.3/mingw_64/include/QtCore/qsettings.h \
+		C:/Qt/6.7.3/mingw_64/include/QtGui/QCloseEvent \
+		C:/Qt/6.7.3/mingw_64/include/QtGui/QClipboard \
+		C:/Qt/6.7.3/mingw_64/include/QtGui/qclipboard.h \
+		C:/Qt/6.7.3/mingw_64/include/QtGui/QGuiApplication \
+		C:/Qt/6.7.3/mingw_64/include/QtCore/QProcess \
+		C:/Qt/6.7.3/mingw_64/include/QtCore/qprocess.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\mainwindow.o mainwindow.cpp
 
 release/spectrogramwidget.o: spectrogramwidget.cpp spectrogramwidget.h \
