@@ -2487,32 +2487,20 @@ void MainWindow::exportStackedPng() {
 }
 
 void MainWindow::exportDataCsv() {
+    // In Data View mode: export all data files (sensors) as columns, one column per sensor
+    if (isDataMode() && currentEventTime.isValid() && !currentFiles.isEmpty()) {
+        exportDataCsvDataView();
+        return;
+    }
+
+    // Fallback: export currentRawSamples (Event View or single file)
     if (currentRawSamples.isEmpty()) {
         QMessageBox::information(this, "Export CSV", "No data loaded. Please load a file first.");
         return;
     }
 
-    // Determine which data to export:
-    // - In Data View: export the event time window slice (around the event)
-    // - In Event View: export the full file data
-    QVector<QVector<double>> exportSamples;
-    QStringList exportChannelNames = currentChannelNames;
-
-    if (isDataMode() && currentEventTime.isValid()) {
-        // Build the event window slice (same as what buildDataSliceSamples does)
-        QVector<QVector<double>> slicedSamples;
-        int sliceStartIndex = 0;
-        if (buildDataSliceSamples(currentRawSamples, slicedSamples, sliceStartIndex) && !slicedSamples.isEmpty()) {
-            exportSamples = slicedSamples;
-        } else {
-            exportSamples = currentRawSamples;
-        }
-    } else {
-        exportSamples = currentRawSamples;
-    }
-
-    const int numRows = static_cast<int>(exportSamples.size());
-    const int numCols = exportSamples.isEmpty() ? 0 : static_cast<int>(exportSamples[0].size());
+    const int numRows = static_cast<int>(currentRawSamples.size());
+    const int numCols = currentRawSamples.isEmpty() ? 0 : static_cast<int>(currentRawSamples[0].size());
     if (numRows == 0 || numCols == 0) {
         QMessageBox::information(this, "Export CSV", "Data is empty.");
         return;
@@ -2535,8 +2523,8 @@ void MainWindow::exportDataCsv() {
     // Write header: one column per channel
     QStringList header;
     for (int c = 0; c < numCols; ++c) {
-        if (c < exportChannelNames.size()) {
-            header << exportChannelNames[c];
+        if (c < currentChannelNames.size()) {
+            header << currentChannelNames[c];
         } else {
             header << QString("Ch%1").arg(c + 1);
         }
@@ -2545,7 +2533,7 @@ void MainWindow::exportDataCsv() {
 
     // Write data rows (each row = one time sample, values = channels)
     for (int r = 0; r < numRows; ++r) {
-        const auto &row = exportSamples[r];
+        const auto &row = currentRawSamples[r];
         QStringList vals;
         for (int c = 0; c < numCols; ++c) {
             if (c < row.size()) {
@@ -2562,6 +2550,172 @@ void MainWindow::exportDataCsv() {
                                  .arg(QDir::toNativeSeparators(savePath))
                                  .arg(numRows)
                                  .arg(numCols),
+                             5000);
+    return;
+}
+
+void MainWindow::exportDataCsvDataView() {
+    // In Data View: export all data files found by resolveDataFiles.
+    // Each file (sensor) becomes one column in the CSV.
+    // Data is sliced to the event time window (4000 samples around event).
+
+    const int kExportPre = 1000;
+    const int kExportPost = 3000;
+    const int kExportTotal = kExportPre + kExportPost;
+
+    auto readMinuteFile = [](const QString &path, WaveData &out, QString &err) -> bool {
+        if (WaveformReader::readTextWaveFile(path, out, err)) {
+            return true;
+        }
+        err.clear();
+        return WaveformReader::readWaveFile(path, out, err);
+    };
+
+    auto findMinuteFile = [&](const QString &sensorId, const QDateTime &dt) -> QString {
+        if (currentDataRoot.isEmpty() || currentDataProject.isEmpty()) {
+            return {};
+        }
+        QDir hDir(currentDataRoot);
+        if (!hDir.cd(currentDataProject)) return {};
+        if (!hDir.cd(sensorId)) return {};
+        if (!hDir.cd(dt.date().toString("yyyy"))) return {};
+        if (!hDir.cd(dt.date().toString("MM"))) return {};
+        if (!hDir.cd(dt.date().toString("dd"))) return {};
+
+        const QString hNoPad = QString::number(dt.time().hour());
+        const QString hPad = dt.time().toString("HH");
+        if (!hDir.cd(hNoPad) && !hDir.cd(hPad)) return {};
+
+        const QString mPad = dt.time().toString("mm");
+        const QString mNoPad = QString::number(dt.time().minute());
+        QStringList filters;
+        filters << mPad + ".*" << mPad << mNoPad + ".*" << mNoPad;
+        hDir.setNameFilters(filters);
+        const QFileInfoList files = hDir.entryInfoList(QDir::Files | QDir::NoDotAndDotDot, QDir::Name);
+        for (const QFileInfo &fi : files) {
+            if (fi.baseName() == mPad || fi.baseName() == mNoPad || fi.fileName() == mPad || fi.fileName() == mNoPad) {
+                return fi.absoluteFilePath();
+            }
+        }
+        return {};
+    };
+
+    const int sec = currentEventTime.time().second();
+    const int ms = currentEventTime.time().msec();
+    const int anchorIndex = sec * kSampleRateHz + (ms * kSampleRateHz) / 1000;
+    const int startIndex = anchorIndex - kExportPre;
+    const int endIndex = anchorIndex + kExportPost;
+
+    struct SensorColumn {
+        QString name;
+        QVector<double> data;
+    };
+    QVector<SensorColumn> columns;
+
+    for (const QString &filePath : currentFiles) {
+        WaveData curr;
+        QString err;
+        if (!readMinuteFile(filePath, curr, err) || curr.samples.isEmpty()) {
+            continue;
+        }
+
+        const QString sensorId = dataFileSensors.value(filePath, QFileInfo(filePath).fileName());
+        QVector<double> trace;
+        trace.reserve(kExportTotal);
+
+        WaveData prev;
+        WaveData next;
+        const int currCount = curr.samples.size();
+        if (startIndex < 0) {
+            const QString prevPath = findMinuteFile(sensorId, currentEventTime.addSecs(-60));
+            if (!prevPath.isEmpty()) {
+                QString e;
+                readMinuteFile(prevPath, prev, e);
+            }
+        }
+        if (endIndex > currCount) {
+            const QString nextPath = findMinuteFile(sensorId, currentEventTime.addSecs(60));
+            if (!nextPath.isEmpty()) {
+                QString e;
+                readMinuteFile(nextPath, next, e);
+            }
+        }
+
+        for (int i = startIndex; i < endIndex; ++i) {
+            double value = 0.0;
+            if (i < 0) {
+                const int idx = prev.samples.size() + i;
+                if (idx >= 0 && idx < prev.samples.size() && !prev.samples[idx].isEmpty()) {
+                    value = prev.samples[idx][0];
+                }
+            } else if (i < currCount) {
+                if (!curr.samples[i].isEmpty()) {
+                    value = curr.samples[i][0];
+                }
+            } else {
+                const int idx = i - currCount;
+                if (idx >= 0 && idx < next.samples.size() && !next.samples[idx].isEmpty()) {
+                    value = next.samples[idx][0];
+                }
+            }
+            trace.push_back(value);
+        }
+
+        columns.push_back({sensorId, trace});
+    }
+
+    if (columns.isEmpty()) {
+        QMessageBox::information(this, "Export CSV", "No data files could be read.");
+        return;
+    }
+
+    // Verify all columns have the same length
+    int numRows = columns[0].data.size();
+    for (const auto &col : columns) {
+        if (col.data.size() != numRows) {
+            numRows = std::min(numRows, static_cast<int>(col.data.size()));
+        }
+    }
+
+    QString defaultName = QString("dataview_%1_channels.csv").arg(columns.size());
+    const QString savePath = QFileDialog::getSaveFileName(this, "Export Data View CSV", defaultName, "CSV (*.csv)");
+    if (savePath.isEmpty()) {
+        return;
+    }
+
+    QFile f(savePath);
+    if (!f.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, "Export CSV", "Failed to open file for writing:\n" + f.errorString());
+        return;
+    }
+
+    QTextStream out(&f);
+
+    // Write header: one column per sensor
+    QStringList header;
+    for (const auto &col : columns) {
+        header << col.name;
+    }
+    out << header.join(",") << "\n";
+
+    // Write data rows
+    for (int r = 0; r < numRows; ++r) {
+        QStringList vals;
+        for (const auto &col : columns) {
+            if (r < col.data.size()) {
+                vals << QString::number(col.data[r], 'f', 8);
+            } else {
+                vals << "0";
+            }
+        }
+        out << vals.join(",") << "\n";
+    }
+
+    f.close();
+    statusBar()->showMessage(QString("Exported Data View CSV: %1  (%2 rows x %3 sensors)")
+                                 .arg(QDir::toNativeSeparators(savePath))
+                                 .arg(numRows)
+                                 .arg(columns.size()),
                              5000);
 }
 

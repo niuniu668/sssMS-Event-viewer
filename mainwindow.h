@@ -65,6 +65,7 @@ private slots:
     void showFullWaveform();
     void toggleDataSliceMode();
     void exportDataCsv();
+    void exportDataCsvDataView();
     void sendToPick();
     void receiveFromDataView();
     void togglePickWaveformMode();
