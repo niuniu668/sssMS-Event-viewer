@@ -177,6 +177,10 @@ void WaveformWidget::paintEvent(QPaintEvent *event) {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
 
+    // Reset painter state to avoid leftover pen/brush from previous draws
+    painter.setPen(Qt::black);
+    painter.setBrush(Qt::NoBrush);
+
     painter.fillRect(rect(), Qt::white);
 
     if (m_samples.isEmpty()) {
@@ -656,6 +660,8 @@ void WaveformWidget::drawPickMarkers(QPainter &painter, const QRect &plotRect) {
         return;
     }
 
+    painter.save();
+
     const int channelCount = m_samples[0].size();
     if (channelCount <= 0) {
         return;
@@ -680,7 +686,7 @@ void WaveformWidget::drawPickMarkers(QPainter &painter, const QRect &plotRect) {
         const double bandBottom = bandTop + bandHeight;
         const int yCenter = static_cast<int>(std::round((bandTop + bandBottom) * 0.5));
 
-        QColor color = (marker.phase == "P") ? QColor(220, 20, 60) : QColor(25, 118, 210);
+        QColor color = (marker.phase == "P") ? QColor(220, 20, 60) : QColor(46, 180, 46);
         QPen pen(color, 1.6, marker.suggested ? Qt::DashLine : Qt::SolidLine);
         painter.setPen(pen);
         painter.drawLine(x, static_cast<int>(bandTop + 2), x, static_cast<int>(bandBottom - 2));
@@ -693,12 +699,16 @@ void WaveformWidget::drawPickMarkers(QPainter &painter, const QRect &plotRect) {
         const QString text = marker.suggested ? (marker.phase + "?") : marker.phase;
         painter.drawText(x + 4, yCenter - 4, text);
     }
+
+    painter.restore();
 }
 
 void WaveformWidget::drawAssistOverlay(QPainter &painter, const QRect &plotRect) {
     if (m_plotMode != PlotMode::SingleFile || m_samples.isEmpty()) {
         return;
     }
+
+    painter.save();
 
     const int n = totalSamples();
     const double visible = visibleSampleCount();
@@ -796,6 +806,8 @@ void WaveformWidget::drawAssistOverlay(QPainter &painter, const QRect &plotRect)
         painter.drawText(plotRect.right() - 220, plotRect.top() + 18, 210, 16, Qt::AlignRight | Qt::AlignVCenter,
                          QString("Assist: %1").arg(m_assistCurveName));
     }
+
+    painter.restore();
 }
 
 int WaveformWidget::pixelToChannelY(int py) const {

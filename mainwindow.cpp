@@ -89,7 +89,7 @@ void attachPathContextMenu(QListWidget *listWidget, QWidget *parentWidget) {
         }
 
         QMenu menu(parentWidget);
-        QAction *copyNameAction = menu.addAction("复制名称");
+        QAction *copyNameAction = menu.addAction("复制地址");
         QAction *openExplorerAction = menu.addAction("在资源管理器中打开");
 
         QAction *chosen = menu.exec(listWidget->viewport()->mapToGlobal(pos));
@@ -98,11 +98,7 @@ void attachPathContextMenu(QListWidget *listWidget, QWidget *parentWidget) {
         }
 
         if (chosen == copyNameAction) {
-            QString name = QFileInfo(path).fileName();
-            if (name.isEmpty()) {
-                name = QFileInfo(path).dir().dirName();
-            }
-            QGuiApplication::clipboard()->setText(name);
+            QGuiApplication::clipboard()->setText(path);
             return;
         }
 
@@ -168,6 +164,9 @@ MainWindow::MainWindow(QWidget *parent)
       findDataCheck(new QCheckBox("Find corresponding Data (prioritized)", this)),
       showSpectrumCheck(new QCheckBox("Show Spectrum", this)),
       showSpectrogramCheck(new QCheckBox("Show Time-Frequency", this)),
+    spectrumLinearCheck(new QCheckBox("Linear Spectrum", this)),
+      spectrogramWinSpin(new QSpinBox(this)),
+      spectrogramHopSpin(new QSpinBox(this)),
       eventFolderList(new QListWidget(this)),
       eventFileList(new QListWidget(this)),
       dataFolderList(new QListWidget(this)),
@@ -199,6 +198,7 @@ MainWindow::MainWindow(QWidget *parent)
             runAicButton(new QPushButton("AIC Assist", this)),
             runBatchAutoPickButton(new QPushButton("Batch Auto Pick", this)),
             acceptSuggestedButton(new QPushButton("Accept Suggestions", this)),
+            clearAssistCurveButton(new QPushButton("Clear Assist Curve", this)),
             pickTable(new QTableWidget(this)),
       waveWidget(new WaveformWidget(this)),
       spectrumWidget(new SpectrumWidget(this)),
@@ -209,6 +209,7 @@ MainWindow::MainWindow(QWidget *parent)
             saveStackedButton(new QPushButton("Save Stacked PNG", this)),
             showFullButton(new QPushButton("Show Full Waveform", this)),
         dataSliceButton(new QPushButton("Show Slice", this)),
+        exportDataCsvButton(new QPushButton("Export Data CSV", this)),
             sendToPickButton(new QPushButton("Send to Pick", this)),
             receiveFromDataViewButton(new QPushButton("Receive from Data View", this)),
             pickToggleFullButton(new QPushButton("Show Full Waveform", this)) {
@@ -226,7 +227,22 @@ MainWindow::MainWindow(QWidget *parent)
 
     auto *globalRow = new QHBoxLayout();
     globalRow->addWidget(showSpectrumCheck);
+    globalRow->addWidget(spectrumLinearCheck);
     globalRow->addWidget(showSpectrogramCheck);
+    globalRow->addWidget(new QLabel("Win:"));
+    spectrogramWinSpin->setRange(32, 4096);
+    spectrogramWinSpin->setSingleStep(32);
+    spectrogramWinSpin->setValue(512);
+    spectrogramWinSpin->setToolTip("FFT window size (samples)");
+    spectrogramWinSpin->setFixedWidth(70);
+    globalRow->addWidget(spectrogramWinSpin);
+    globalRow->addWidget(new QLabel("Hop:"));
+    spectrogramHopSpin->setRange(4, 2048);
+    spectrogramHopSpin->setSingleStep(8);
+    spectrogramHopSpin->setValue(128);
+    spectrogramHopSpin->setToolTip("Hop size between frames (samples)");
+    spectrogramHopSpin->setFixedWidth(70);
+    globalRow->addWidget(spectrogramHopSpin);
     globalRow->addStretch();
 
     auto *saveRow = new QHBoxLayout();
@@ -307,6 +323,7 @@ MainWindow::MainWindow(QWidget *parent)
     auto *dataOptRow = new QHBoxLayout();
     dataOptRow->addWidget(findDataCheck);
     dataOptRow->addWidget(dataSliceButton);
+    dataOptRow->addWidget(exportDataCsvButton);
     dataOptRow->addStretch();
 
     auto *dataTreeRow = new QHBoxLayout();
@@ -419,6 +436,7 @@ MainWindow::MainWindow(QWidget *parent)
     actionLayout->addWidget(runAicButton);
     actionLayout->addWidget(runBatchAutoPickButton);
     actionLayout->addWidget(acceptSuggestedButton);
+    actionLayout->addWidget(clearAssistCurveButton);
     actionLayout->addWidget(clearPickButton);
     actionLayout->addWidget(savePickButton);
     actionLayout->addWidget(exportPickCsvButton);
@@ -556,6 +574,11 @@ MainWindow::MainWindow(QWidget *parent)
     connect(runAicButton, &QPushButton::clicked, this, &MainWindow::runAicAssist);
     connect(runBatchAutoPickButton, &QPushButton::clicked, this, &MainWindow::runBatchAutoPick);
     connect(acceptSuggestedButton, &QPushButton::clicked, this, &MainWindow::acceptSuggestedPickMarkers);
+    connect(clearAssistCurveButton, &QPushButton::clicked, this, [this]() {
+        waveWidget->clearAssistCurve();
+        waveWidget->clearAssistRange();
+        statusBar()->showMessage("Assist curve cleared", 2500);
+    });
     connect(pickDisplayCombo, qOverload<int>(&QComboBox::currentIndexChanged), this, [this](int) {
         reloadPickWaveformDisplay();
         refreshPickInfo();
@@ -615,12 +638,26 @@ MainWindow::MainWindow(QWidget *parent)
     });
     connect(showSpectrumCheck, &QCheckBox::toggled, this, &MainWindow::onShowSpectrumChanged);
     connect(showSpectrogramCheck, &QCheckBox::toggled, this, &MainWindow::onShowSpectrogramChanged);
+    connect(spectrogramWinSpin, qOverload<int>(&QSpinBox::valueChanged), this, [this](int val) {
+        spectrogramWidget->setWindowSize(val);
+        if (showSpectrogramCheck->isChecked()) refreshAnalysisWidgets();
+    });
+    connect(spectrogramHopSpin, qOverload<int>(&QSpinBox::valueChanged), this, [this](int val) {
+        spectrogramWidget->setHopSize(val);
+        if (showSpectrogramCheck->isChecked()) refreshAnalysisWidgets();
+    });
+    connect(spectrumLinearCheck, &QCheckBox::toggled, this, [this](bool checked) {
+        spectrumWidget->setDisplayMode(checked ? SpectrumWidget::DisplayMode::Linear
+                                                : SpectrumWidget::DisplayMode::Decibel);
+        refreshAnalysisWidgets();
+    });
     connect(saveCurrentButton, &QPushButton::clicked, this, &MainWindow::exportCurrentPng);
     connect(saveOverviewButton, &QPushButton::clicked, this, &MainWindow::exportOverviewPng);
     connect(previewStackedButton, &QPushButton::clicked, this, &MainWindow::previewStacked);
     connect(saveStackedButton, &QPushButton::clicked, this, &MainWindow::exportStackedPng);
     connect(showFullButton, &QPushButton::clicked, this, &MainWindow::showFullWaveform);
     connect(dataSliceButton, &QPushButton::clicked, this, &MainWindow::toggleDataSliceMode);
+    connect(exportDataCsvButton, &QPushButton::clicked, this, &MainWindow::exportDataCsv);
     connect(sendToPickButton, &QPushButton::clicked, this, &MainWindow::sendToPick);
     connect(receiveFromDataViewButton, &QPushButton::clicked, this, &MainWindow::receiveFromDataView);
     connect(pickToggleFullButton, &QPushButton::clicked, this, &MainWindow::togglePickWaveformMode);
@@ -1459,6 +1496,8 @@ bool MainWindow::loadDataEventWindow(const QString &filePath, const QString &sen
     }
 
     currentFilePath = filePath;
+    currentRawSamples = wd.samples;
+    currentChannelNames = channelNames;
     currentSignal.clear();
     currentSignal.reserve(wd.samples.size());
     for (const auto &row : wd.samples) {
@@ -2115,6 +2154,8 @@ void MainWindow::onShowSpectrogramChanged(bool checked) {
 
 void MainWindow::refreshAnalysisWidgets() {
     if (showSpectrumCheck->isChecked()) {
+        spectrumWidget->setDisplayMode(spectrumLinearCheck->isChecked() ? SpectrumWidget::DisplayMode::Linear
+                                                                       : SpectrumWidget::DisplayMode::Decibel);
         spectrumWidget->setSignal(currentSignal, kSampleRateHz);
         spectrumWidget->setViewRange(currentViewStart, currentViewEnd);
     }
@@ -2445,6 +2486,85 @@ void MainWindow::exportStackedPng() {
     statusBar()->showMessage(QString("Saved stacked image: %1").arg(QDir::toNativeSeparators(savePath)), 5000);
 }
 
+void MainWindow::exportDataCsv() {
+    if (currentRawSamples.isEmpty()) {
+        QMessageBox::information(this, "Export CSV", "No data loaded. Please load a file first.");
+        return;
+    }
+
+    // Determine which data to export:
+    // - In Data View: export the event time window slice (around the event)
+    // - In Event View: export the full file data
+    QVector<QVector<double>> exportSamples;
+    QStringList exportChannelNames = currentChannelNames;
+
+    if (isDataMode() && currentEventTime.isValid()) {
+        // Build the event window slice (same as what buildDataSliceSamples does)
+        QVector<QVector<double>> slicedSamples;
+        int sliceStartIndex = 0;
+        if (buildDataSliceSamples(currentRawSamples, slicedSamples, sliceStartIndex) && !slicedSamples.isEmpty()) {
+            exportSamples = slicedSamples;
+        } else {
+            exportSamples = currentRawSamples;
+        }
+    } else {
+        exportSamples = currentRawSamples;
+    }
+
+    const int numRows = static_cast<int>(exportSamples.size());
+    const int numCols = exportSamples.isEmpty() ? 0 : static_cast<int>(exportSamples[0].size());
+    if (numRows == 0 || numCols == 0) {
+        QMessageBox::information(this, "Export CSV", "Data is empty.");
+        return;
+    }
+
+    QString defaultName = QFileInfo(currentFilePath).baseName() + "_data.csv";
+    const QString savePath = QFileDialog::getSaveFileName(this, "Export Data as CSV", defaultName, "CSV (*.csv)");
+    if (savePath.isEmpty()) {
+        return;
+    }
+
+    QFile f(savePath);
+    if (!f.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, "Export CSV", "Failed to open file for writing:\n" + f.errorString());
+        return;
+    }
+
+    QTextStream out(&f);
+
+    // Write header: one column per channel
+    QStringList header;
+    for (int c = 0; c < numCols; ++c) {
+        if (c < exportChannelNames.size()) {
+            header << exportChannelNames[c];
+        } else {
+            header << QString("Ch%1").arg(c + 1);
+        }
+    }
+    out << header.join(",") << "\n";
+
+    // Write data rows (each row = one time sample, values = channels)
+    for (int r = 0; r < numRows; ++r) {
+        const auto &row = exportSamples[r];
+        QStringList vals;
+        for (int c = 0; c < numCols; ++c) {
+            if (c < row.size()) {
+                vals << QString::number(row[c], 'f', 8);
+            } else {
+                vals << "0";
+            }
+        }
+        out << vals.join(",") << "\n";
+    }
+
+    f.close();
+    statusBar()->showMessage(QString("Exported CSV: %1  (%2 rows x %3 columns)")
+                                 .arg(QDir::toNativeSeparators(savePath))
+                                 .arg(numRows)
+                                 .arg(numCols),
+                             5000);
+}
+
 void MainWindow::showFullWaveform() {
     if (currentFilePath.isEmpty()) {
         QMessageBox::information(this, "Show Full Waveform", "Please select a file first.");
@@ -2733,11 +2853,30 @@ bool MainWindow::loadPickFile(const QString &filePath) {
         }
     }
 
+    // Extract sensor ID from folder path for channel naming
+    // Path structure: .../Data/Project/SensorId/yyyy/MM/dd/HH/mm.*
+    // Or from receivedPickFileSensors if available
+    QString sensorId;
+    if (!receivedPickFileSensors.isEmpty() && receivedPickFileSensors.contains(filePath)) {
+        sensorId = receivedPickFileSensors.value(filePath);
+    } else if (!currentDataSensorId.isEmpty()) {
+        sensorId = currentDataSensorId;
+    } else {
+        // Try to extract from folder path: look for a numeric folder name near the end
+        const QFileInfo fi(filePath);
+        QDir d = fi.absoluteDir(); // mm directory
+        d.cdUp(); // HH
+        d.cdUp(); // dd
+        d.cdUp(); // MM
+        d.cdUp(); // yyyy
+        sensorId = d.dirName(); // sensorId folder
+    }
+
     pickCurrentChannelNames.clear();
     if (wd.isThreeComponent) {
-        pickCurrentChannelNames << "X" << "Y" << "Z";
+        pickCurrentChannelNames << (sensorId + "-X") << (sensorId + "-Y") << (sensorId + "-Z");
     } else {
-        pickCurrentChannelNames << "Amp";
+        pickCurrentChannelNames << (sensorId.isEmpty() ? "Amp" : sensorId);
     }
 
     pickCurrentRawSamples = wd.samples; // 【TEMP】直接用原始数据！
@@ -2830,7 +2969,10 @@ void MainWindow::refreshPickTable() {
     for (int i = 0; i < markers.size(); ++i) {
         const auto &m = markers[i];
         pickTable->setItem(i, 0, new QTableWidgetItem(m.phase));
-        pickTable->setItem(i, 1, new QTableWidgetItem(QString::number(m.channel + 1)));
+        const QString chName = (m.channel >= 0 && m.channel < pickCurrentChannelNames.size())
+                                   ? pickCurrentChannelNames[m.channel]
+                                   : QString::number(m.channel + 1);
+        pickTable->setItem(i, 1, new QTableWidgetItem(chName));
         pickTable->setItem(i, 2, new QTableWidgetItem(QString::number(m.sampleIndex)));
         pickTable->setItem(i, 3, new QTableWidgetItem(QString::number(static_cast<double>(m.sampleIndex) / kSampleRateHz, 'f', 4)));
         pickTable->setItem(i, 4, new QTableWidgetItem(m.suggested ? "assist" : "manual"));

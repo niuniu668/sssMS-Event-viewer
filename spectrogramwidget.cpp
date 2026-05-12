@@ -32,6 +32,20 @@ void SpectrogramWidget::setViewRange(int startSample, int endSample) {
     update();
 }
 
+void SpectrogramWidget::setWindowSize(int winSize) {
+    m_winSize = std::clamp(winSize, 32, 4096);
+    // Ensure winSize is even
+    if (m_winSize % 2 != 0) ++m_winSize;
+    recomputeSpectrogram();
+    update();
+}
+
+void SpectrogramWidget::setHopSize(int hopSize) {
+    m_hopSize = std::clamp(hopSize, 4, 2048);
+    recomputeSpectrogram();
+    update();
+}
+
 QRgb SpectrogramWidget::colorMap(double v) const {
     const double x = std::clamp(v, 0.0, 1.0);
     const int r = static_cast<int>(255.0 * std::pow(x, 0.85));
@@ -64,8 +78,8 @@ void SpectrogramWidget::recomputeSpectrogram() {
         seg[i] = m_signal[srcIdx];
     }
 
-    const int win = 256;
-    const int hop = 64;
+    const int win = m_winSize;
+    const int hop = m_hopSize;
     const int bins = win / 2;
     if (sampledLen < win) {
         return;

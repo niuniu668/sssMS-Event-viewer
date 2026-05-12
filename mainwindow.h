@@ -64,6 +64,7 @@ private slots:
     void exportStackedPng();
     void showFullWaveform();
     void toggleDataSliceMode();
+    void exportDataCsv();
     void sendToPick();
     void receiveFromDataView();
     void togglePickWaveformMode();
@@ -125,6 +126,9 @@ private:
     QCheckBox *findDataCheck;
     QCheckBox *showSpectrumCheck;
     QCheckBox *showSpectrogramCheck;
+    QCheckBox *spectrumLinearCheck;
+    QSpinBox *spectrogramWinSpin;
+    QSpinBox *spectrogramHopSpin;
 
     QListWidget *eventFolderList;
     QListWidget *eventFileList;
@@ -160,6 +164,7 @@ private:
     QPushButton *runAicButton;
     QPushButton *runBatchAutoPickButton;
     QPushButton *acceptSuggestedButton;
+    QPushButton *clearAssistCurveButton;
     QTableWidget *pickTable;
 
     WaveformWidget *waveWidget;
@@ -175,6 +180,7 @@ private:
     QPushButton *receiveFromDataViewButton;
     QPushButton *pickToggleFullButton;
     QPushButton *dataSliceButton;
+    QPushButton *exportDataCsvButton;
     
     QStringList receivedPickFileList;
     QString receivedPickDataRoot;

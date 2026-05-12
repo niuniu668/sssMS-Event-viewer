@@ -14,6 +14,11 @@ public:
     void setSignal(const QVector<double> &signal, int sampleRateHz);
     void setViewRange(int startSample, int endSample);
 
+    void setWindowSize(int winSize);
+    void setHopSize(int hopSize);
+    int windowSize() const { return m_winSize; }
+    int hopSize() const { return m_hopSize; }
+
 protected:
     void paintEvent(QPaintEvent *event) override;
 
@@ -28,6 +33,8 @@ private:
     int m_startSample = 0;
     int m_endSample = 0;
     int m_frameCount = 0;
+    int m_winSize = 512;
+    int m_hopSize = 128;
 };
 
 #endif

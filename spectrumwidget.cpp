@@ -32,8 +32,18 @@ void SpectrumWidget::setViewRange(int startSample, int endSample) {
     update();
 }
 
+void SpectrumWidget::setDisplayMode(DisplayMode mode) {
+    if (m_displayMode == mode) {
+        return;
+    }
+
+    m_displayMode = mode;
+    update();
+}
+
 void SpectrumWidget::recomputeSpectrum() {
     m_freqAxisHz.clear();
+    m_magLinear.clear();
     m_magDb.clear();
 
     if (m_signal.size() < 16) {
@@ -82,10 +92,12 @@ void SpectrumWidget::recomputeSpectrum() {
     }
 
     m_freqAxisHz.resize(bins);
+    m_magLinear.resize(bins);
     m_magDb.resize(bins);
     for (int k = 0; k < bins; ++k) {
         const double norm = mags[k] / peak;
         m_freqAxisHz[k] = (static_cast<double>(k) * m_sampleRateHz) / n;
+        m_magLinear[k] = norm;
         m_magDb[k] = 20.0 * std::log10(std::max(norm, 1e-6));
     }
 }
@@ -112,8 +124,27 @@ void SpectrumWidget::paintEvent(QPaintEvent *event) {
 
     const double fMin = 0.0;
     const double fMax = m_sampleRateHz * 0.5;
-    const double dbMin = -100.0;
-    const double dbMax = 0.0;
+    double yMin = 0.0;
+    double yMax = 1.0;
+    QString yAxisLabel = "Magnitude (linear)";
+    if (m_displayMode == DisplayMode::Decibel) {
+        double actualDbMin = 0.0;
+        double actualDbMax = -120.0;
+        for (double db : m_magDb) {
+            actualDbMin = std::min(actualDbMin, db);
+            actualDbMax = std::max(actualDbMax, db);
+        }
+
+        yMax = actualDbMax + 5.0;
+        yMin = actualDbMin - 10.0;
+        if (yMax - yMin < 20.0) {
+            yMin = yMax - 20.0;
+        }
+        yAxisLabel = "Magnitude (dB)";
+    } else {
+        yMin = 0.0;
+        yMax = 1.05;
+    }
 
     p.setPen(QPen(QColor(220, 226, 234), 1));
     const int xTickCount = 6;
@@ -133,8 +164,9 @@ void SpectrumWidget::paintEvent(QPaintEvent *event) {
     QPointF prev;
     bool started = false;
     for (int i = 0; i < m_freqAxisHz.size(); ++i) {
+        const double value = (m_displayMode == DisplayMode::Decibel) ? m_magDb[i] : m_magLinear[i];
         const double fx = (m_freqAxisHz[i] - fMin) / std::max(1e-9, fMax - fMin);
-        const double fy = (m_magDb[i] - dbMin) / std::max(1e-9, dbMax - dbMin);
+        const double fy = (value - yMin) / std::max(1e-9, yMax - yMin);
         const double x = plot.left() + std::clamp(fx, 0.0, 1.0) * plot.width();
         const double y = plot.bottom() - std::clamp(fy, 0.0, 1.0) * plot.height();
         const QPointF pt(x, y);
@@ -157,12 +189,15 @@ void SpectrumWidget::paintEvent(QPaintEvent *event) {
     for (int i = 0; i <= yTickCount; ++i) {
         const double r = static_cast<double>(i) / yTickCount;
         const int y = plot.bottom() - static_cast<int>(r * plot.height());
-        const int db = static_cast<int>(std::round(dbMin + r * (dbMax - dbMin)));
-        p.drawText(plot.left() - 48, y - 8, 42, 16, Qt::AlignRight | Qt::AlignVCenter, QString::number(db));
+        const double value = yMin + r * (yMax - yMin);
+        const QString label = (m_displayMode == DisplayMode::Decibel)
+                                  ? QString::number(static_cast<int>(std::round(value)))
+                                  : QString::number(value, 'f', 2);
+        p.drawText(plot.left() - 48, y - 8, 42, 16, Qt::AlignRight | Qt::AlignVCenter, label);
     }
     p.save();
     p.translate(14, plot.center().y());
     p.rotate(-90);
-    p.drawText(QRect(-58, -10, 116, 20), Qt::AlignCenter, "Magnitude (dB)");
+    p.drawText(QRect(-58, -10, 116, 20), Qt::AlignCenter, yAxisLabel);
     p.restore();
 }
